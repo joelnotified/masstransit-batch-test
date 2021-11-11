@@ -9,7 +9,6 @@ using MassTransit.Topology;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Logging.Abstractions;
 using WorkerService;
 using IHost = Microsoft.Extensions.Hosting.IHost;
 
@@ -48,9 +47,8 @@ void Configure(IServiceCollection services, string connectionString)
 }
 
 void ConfigureSubsriptionEndpoint<TConsumer>(IServiceBusBusFactoryConfigurator serviceBusBusFactoryConfigurator, IBusRegistrationContext context, string subscriptionName)
-    where TConsumer : class, IConsumer<Batch<IMyEvent>>, new()
+    where TConsumer : class, IConsumer<Batch<IMyEvent>>
 {
-
     serviceBusBusFactoryConfigurator.SubscriptionEndpoint<IMyEvent>(
         subscriptionName,
         receiveEndpointConfigurator =>
@@ -72,16 +70,6 @@ void ConfigureSubsriptionEndpoint<TConsumer>(IServiceBusBusFactoryConfigurator s
                         batchOptions.ConcurrencyLimit = 10;
                     });
                 });
-
-            // // Configuring the batch consumer like this gives the same error
-            // receiveEndpointConfigurator.Batch<IMyEvent>(batchOptions =>
-            // {
-            //     batchOptions.MessageLimit = 100;
-            //     batchOptions.TimeLimit = TimeSpan.FromSeconds(5);
-            //     batchOptions.ConcurrencyLimit = 10;
-            //     
-            //     batchOptions.Consumer(() => new TConsumer());
-            // });
         });
 }
 
@@ -92,7 +80,6 @@ namespace WorkerService
         private readonly Random _random;
         private readonly ILogger<TestConsumer1> _logger;
 
-        public TestConsumer1(): this(new NullLogger<TestConsumer1>()) {}
         public TestConsumer1(ILogger<TestConsumer1> logger)
         {
             _logger = logger;
@@ -111,8 +98,6 @@ namespace WorkerService
         private readonly Random _random;
         private readonly ILogger<TestConsumer2> _logger;
 
-        public TestConsumer2(): this(new NullLogger<TestConsumer2>()) {}
-
         public TestConsumer2(ILogger<TestConsumer2> logger)
         {
             _logger = logger;
@@ -130,7 +115,6 @@ namespace WorkerService
     {
         private readonly Random _random;
         private readonly ILogger<TestConsumer3> _logger;
-        public TestConsumer3(): this(new NullLogger<TestConsumer3>()) {}
 
         public TestConsumer3(ILogger<TestConsumer3> logger)
         {
@@ -150,8 +134,6 @@ namespace WorkerService
         private readonly Random _random;
         private readonly ILogger<TestConsumer4> _logger;
 
-        public TestConsumer4(): this(new NullLogger<TestConsumer4>()) {}
-
         public TestConsumer4(ILogger<TestConsumer4> logger)
         {
             _logger = logger;
@@ -170,9 +152,6 @@ namespace WorkerService
         private readonly Random _random;
         private readonly ILogger<TestConsumer5> _logger;
 
-        public TestConsumer5(): this(new NullLogger<TestConsumer5>()) {}
-
-        
         public TestConsumer5(ILogger<TestConsumer5> logger)
         {
             _logger = logger;
